@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@600&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./src/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="./src/css/style.css" />
+
+    <title>Lease Calculator</title>
+  </head>
+  <body>
+    <main class="lease-calculator d-flex flex-column overflow-auto">    
+      <div class="calc-content">
+        <div class="border">   
+          <div align="center" class="heading-bar"><span>Lease Calculator/ Worksheet</span></div>
+          <div class="row-section first-row slide-up">
+            <form>
+              <fieldset>
+                <legend>Options</legend>
+                <div class="control invalid">
+                  <label for="makes"> Make</label>
+                  <select class="dropdown makes success" name="makes">
+                    <option value="">Choose...</option>
+                  </select>
+                </div>
+                <div class="control" >
+                  <label for="msrp"> Base Price/ MSRP <em class="fa fa-asterisk" fa_custom fa-1x red-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="Required Input"></em></label>                   
+                  <input  type="text"  placeholder="0.00" name="msrp" class="variable options_amount msrp" maxlength="10"/ required>
+                </div>
+                <div class="control ">
+                  <label for="make_options">Options/ Others</label>                   
+                  <input  type="text"  placeholder ="0.00" name="make_options" class="variable options_amount make_options" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="base_selling_price">Selling Price</label>                   
+                  <input  type="text"  value="0.00" placeholder="0.00"  class="variable base_selling_price" maxlength="10" readonly />
+                </div>
+              </fieldset>
+              <br> 
+              <fieldset>
+                <legend>Capitalization</legend>
+                <div class="control">
+                  <label for="selling_price"> Selling Price</label>                   
+                  <input  type="text"  value="0.00" placeholder="0.00" name="cap_price" class="variable selling_price" maxlength="10" readonly />
+                </div>
+                <div class="control ">
+                  <label for="freight">Freight</label>
+                   
+                  <input  type="text"  placeholder="0.00" name="freight" class="variable freight" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="prior_lease">Prior Lease Balance</label>                   
+                  <input  type="text"  placeholder="0.00" name="prior_lease" class="variable prior_lease" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="accessories">Accessories</label>                   
+                  <input  type="text"  placeholder="0.00" name="accessories" class="variable accessories" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="insurance_protection">Insurance/ Protection</label>                   
+                  <input  type="text"  placeholder="0.00" name="insurance_protection" class="variable insurance_protection" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="other_fees">Other Fees</label>                   
+                  <input  type="text"  placeholder="0.00" name="other_fees" class="variable other_fees" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="cap_subtotal">SubTotal</label>                   
+                  <input  type="text"  value="0.00" placeholder="0.00" name="cap_subtotal" class="variable cap_subtotal" maxlength="10" readonly />
+                </div>
+                <div class="control">
+                  <label for="taxes_1">PST, GST, and/or HST %</label>                   
+                  <input  type="text"  placeholder="0.00%" name="taxes" class="tax taxes_1" maxlength="10" />
+                  <input  type="text"  placeholder="0.00" name="taxes_2" class="tax taxes_2" maxlength="10" readonly />
+                </div>
+                <div class="control">
+                  <label for="capitalized_cost" class="label_total">Capitalized Cost</label>                   
+                  <input  type="text"  value="0.00" placeholder="0.00" name="capitalized_cost" class="variable capitalized_cost" maxlength="10" readonly />
+                </div>
+              </fieldset>
+            </form>   
+            <form>
+              <fieldset>
+                <legend>Cap Reduction</legend>
+                <div class="control ">
+                  <label for="rebates">Rebates</label>
+                   
+                  <input  type="text"  placeholder="0.00" name="rebates" class="variable rebates" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="discount"> Discount</label>                   
+                  <input  type="text"  placeholder="0.00" name="discount" class="variable discount" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="cash_down">Cash Down</label>                   
+                  <input  type="text"  placeholder="0.00" name="cash_down" class="variable cash_down" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="trade-allowance">Trade Allowance</label>                   
+                  <input  type="text"  placeholder="0.00" name="trade-allowance" class="variable trade_allowance" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="lien">Lien owing on Trade</label>                   
+                  <input  type="text"  placeholder="0.00" name="lien" class="variable lien" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="total_reduction" class="label_total">Total Cap Reduction</label>
+                   
+                  <input  type="text"  value="0.00"  placeholder="0.00" name="total_reduction" class="variable total_reduction" maxlength="10" readonly />
+                </div>
+                <div class="control">
+                  <label for="net_lease" class="label_total">Net Lease</label>                   
+                  <input  type="text"  value="0.00"  placeholder="0.00" name="net_lease" class="variable net_lease" maxlength="10" readonly />
+                </div>
+              </fieldset>
+              <br>
+              <fieldset>
+                <legend>Residuals</legend>
+                <div class="control ">
+                  <label for="residual_msrp"> Residual MSRP <em class="fa fa-asterisk" fa_custom fa-1x red-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="Required Input"></em></label>                   
+                  <input  type="text"  placeholder="0.00" name="residual_msrp" class="variable residual_msrp" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="residual_rate">Residual % <em class="fa fa-asterisk" fa_custom fa-1x red-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="Required Input"></em></label>                   
+                  <input  type="text"  placeholder="0.00" name="residual_rate" class="variable residual_rate" maxlength="10" />
+                </div>
+                <div class="control invalid">                 
+                  <label for="annual_km"> Annual KMS  <em class="fa fa-question-circle fa_custom fa-1x red-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="KMS options are based on the selected make. Select a make first. Other makes don't have set KMS yet  :)"> </em> </label>
+                  <select class="annual_km dropdown" name="annual_km">
+                    <option value="">Choose...</option>
+                  </select>
+                </div>               
+                <div class="control">
+                  <label for="residual_amount">Residual Amount</label>                   
+                  <input  type="text"  value="0.00" placeholder="0.00"  name="residual_amount" class="variable residual_amount" maxlength="10" readonly />
+                </div>
+                <div class="control">
+                  <label for="mileage_charges">Mileage Charges</label>                   
+                  <input  type="text"  placeholder="0.00" name="mileage_charges" class="variable mileage_charges" maxlength="10" />
+                </div>
+                <div class="control">
+                  <label for="adusted_residual" class="label_total">Adjusted Residual</label>
+                  <input  type="text"  placeholder="0.00" value="0.00" name="adusted_residual" class="variable adusted_residual" maxlength="10" readonly />
+                </div>
+              </fieldset>
+            </form>          
+            <form>
+              <fieldset>
+                <legend>Payment</legend>  
+                <div class="control">
+                  <label for="rate">Rate % <em class="fa fa-asterisk" fa_custom fa-1x red-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="Required Input"></em></label>                   
+                  <input  type="text"  placeholder="0.00" name="rate" class="variable rate" maxlength="10" />
+                </div>       
+                <div class="control invalid">
+                  <label for="terms"> Term <em class="fa fa-asterisk" fa_custom fa-1x red-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="Required Input"></em></label>
+                  <select class="terms dropdown"  name="terms">
+                    <option value="">Choose...</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="payment_frequency"> Payment Frequency <em class="fa fa-asterisk" fa_custom fa-1x red-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="Required Input"></em></label>
+                  <select class="payment_frequency dropdown" name="payment_frequency">
+                    <option value="">Choose...</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="number_of_payments">Number of Payments</label>                  
+                  <input type="text" name="number_of_payments" class="variable number_of_payments" maxlength="10" readonly />
+                </div>
+                <div class="control">
+                  <label for="total_kms">Total KMS at Lease End</label>                  
+                  <input type="text" name="total_kms" class="variable total_kms" maxlength="10" readonly />
+                </div>
+                <div class="control">
+                  <label for="buy_option" class="label_total">Buy Option</label>
+                   
+                  <input  type="text"  value="0.00" placeholder="0.00"  name="adusted_residual" class="variable buy_option" maxlength="10" readonly />
+                </div>
+                <br>
+                <div class="control">
+                  <label for="base_payment">Base Payment</label>
+                   
+                  <input  type="text"  value="0.00"  placeholder="0.00" name="base_payment" class="variable base_payment" maxlength="10" readonly />
+                </div>
+                <div class="control">
+                  <label for="pst_1">PST %</label>
+                  <input  type="text"  placeholder="0.00%" name="pst_1" class="tax pst_1" maxlength="10" />
+                  <input  type="text"  placeholder="0.00" name="pst_2" class="tax pst_2" maxlength="10" readonly/>
+                </div>
+                <div class="control">
+                  <label for="gst_hst"> GST/HST %</label>                   
+                  <input  type="text"  placeholder="0.00%" name="gst_hst" class="tax gst_hst_1" maxlength="10" />
+                  <input  type="text"  placeholder="0.00" name="gst_hst_2" class="tax gst_hst_2" maxlength="10" readonly/>                 
+                </div>                 
+              </fieldset>
+                <br>
+              <fieldset class="payment_label">
+                <legend class="payment_label">Payment</legend>
+                <div class="payment">0.00               
+                </div>               
+              </fieldset>
+            </form>
+        </div>        
+        <div align="center" class="">
+          <div >           
+            <button type="button" class="btn btn-secondary reset_lease_btn">RESET</button>
+          </div>
+         </div>
+      </div>
+             
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>         
+     <script src="./src/bootstrap/jquery-3.5.1.slim.min.js"></script>
+     <script src="./src/bootstrap/bootstrap.min.js"></script>
+     <script  type="module" src="./src/js/main.js"></script>     
+  </body>
+</html>
