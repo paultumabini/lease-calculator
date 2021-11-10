@@ -2,4 +2,4 @@
 
 ###### This app calculates leases payments for vehicles
 
-link: (https://leasecalculator.netlify.app/)[https://leasecalculator.netlify.app/]
+link: [https://leasecalculator.netlify.app/](https://leasecalculator.netlify.app/)
