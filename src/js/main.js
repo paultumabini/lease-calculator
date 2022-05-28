@@ -1,7 +1,7 @@
 'use strict';
 import { DATA_SUPPLEMENTAL as data } from './dataReference.js';
 import loadDropdownOptions from './renderDropdowns.js';
-import Calculation from './renderderCalculation.js';
+import Calculation from './renderCalculation.js';
 
 //check input values
 const activateInputWatcher = () => {
