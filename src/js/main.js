@@ -34,44 +34,28 @@ const activateInputWatcher = () => {
 // get input values and render calculations
 const calculateLeases = function ({ moneyFactor, points, paymentFrequency }) {
   const values = document.querySelectorAll('select,input');
-  const basePrice = document.querySelector('.base_selling_price');
-  const sellingPrice = document.querySelector('.selling_price');
-  const capSubtotal = document.querySelector('.cap_subtotal');
-  const taxCap = document.querySelector('.taxes_2');
-  const capCost = document.querySelector('.capitalized_cost');
-  const totalReduction = document.querySelector('.total_reduction');
-  const netLease = document.querySelector('.net_lease');
-  const residualAmount = document.querySelector('.residual_amount');
-  const adustedResidual = document.querySelector('.adusted_residual');
-  const numberOfPayments = document.querySelector('.number_of_payments');
-  const totalKms = document.querySelector('.total_kms');
-  const buyOption = document.querySelector('.buy_option');
-  const basePayment = document.querySelector('.base_payment');
-  const pst2 = document.querySelector('.pst_2');
-  const gsthst2 = document.querySelector('.gst_hst_2');
-  const payment = document.querySelector('.payment');
-  const resetBtn = document.querySelector('.reset_lease_btn');
+  const inputElements = {
+    basePrice: document.querySelector('.base_selling_price'),
+    sellingPrice: document.querySelector('.selling_price'),
+    capSubtotal: document.querySelector('.cap_subtotal'),
+    taxCap: document.querySelector('.taxes_2'),
+    capCost: document.querySelector('.capitalized_cost'),
+    totalReduction: document.querySelector('.total_reduction'),
+    netLease: document.querySelector('.net_lease'),
+    residualAmount: document.querySelector('.residual_amount'),
+    adustedResidual: document.querySelector('.adusted_residual'),
+    numberOfPayments: document.querySelector('.number_of_payments'),
+    totalKms: document.querySelector('.total_kms'),
+    buyOption: document.querySelector('.buy_option'),
+    basePayment: document.querySelector('.base_payment'),
+    pst2: document.querySelector('.pst_2'),
+    gsthst2: document.querySelector('.gst_hst_2'),
+    payment: document.querySelector('.payment'),
+    resetBtn: document.querySelector('.reset_lease_btn'),
+  };
 
   const amounts = new Calculation(values, moneyFactor, points, paymentFrequency);
-  amounts.calculate({
-    basePrice,
-    sellingPrice,
-    capSubtotal,
-    taxCap,
-    capCost,
-    totalReduction,
-    netLease,
-    residualAmount,
-    adustedResidual,
-    numberOfPayments,
-    totalKms,
-    buyOption,
-    basePayment,
-    pst2,
-    gsthst2,
-    payment,
-    resetBtn,
-  });
+  amounts.calculate(inputElements);
 };
 
 const init = function () {
