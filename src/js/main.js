@@ -28,6 +28,7 @@ const activateInputWatcher = () => {
       return;
     }
 
+    input.classList.remove('not-a-number', 'reset-not-a-number');
     input.value = Number(String(rawValue).replace(CURRENCY_PATTERN, ''));
   };
 
@@ -38,6 +39,7 @@ const activateInputWatcher = () => {
     const isNumeric = Number.isFinite(parsed);
 
     if (isNumeric) {
+      input.classList.remove('not-a-number', 'reset-not-a-number');
       input.value = parsed.toFixed(2).replace(THOUSAND_SEPARATOR_PATTERN, '$&,');
       return;
     }
