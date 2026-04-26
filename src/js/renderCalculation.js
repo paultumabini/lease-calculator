@@ -1,3 +1,14 @@
+const CURRENCY_REGEX = /[^0-9.-]+/g;
+const THOUSAND_SEPARATOR_REGEX = /\d(?=(\d{3})+\.)/g;
+
+/**
+ * Core lease-calculation engine.
+ * Responsible for:
+ * - deriving intermediate lease values from user-entered form data
+ * - rendering calculated values back to readonly UI fields
+ * - validating required inputs for payment output and displaying hints
+ * - clearing state/UI on reset without forcing a full-page reload
+ */
 class Calculation {
   constructor(prices, moneyFactor, points, paymentFrequency) {
     this.prices = prices;
@@ -6,14 +17,30 @@ class Calculation {
     this.paymentFrequency = paymentFrequency;
   }
 
-  isANumberFormat(...pricing) {
-    const total = pricing.filter(v => Boolean(v)).reduce((acc, cur) => +acc + +cur, 0);
-    return !isNaN(parseFloat(total)) && isFinite(total) ? (+total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') : '';
+  // Converts any formatted/empty value to a safe finite number.
+  static toNumber(value) {
+    if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+    if (typeof value !== 'string') return 0;
+
+    const parsed = Number.parseFloat(value.replace(CURRENCY_REGEX, ''));
+    return Number.isFinite(parsed) ? parsed : 0;
   }
 
-  getPricingAmount() {
-    return;
+  static roundToTwo(value) {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
   }
+
+  static formatNumber(value) {
+    if (!Number.isFinite(value)) return '';
+    return value.toFixed(2).replace(THOUSAND_SEPARATOR_REGEX, '$&,');
+  }
+
+  // Sums arbitrary values and returns a display-ready currency string.
+  isANumberFormat(...pricing) {
+    const total = pricing.reduce((acc, cur) => acc + Calculation.toNumber(cur), 0);
+    return Calculation.formatNumber(total);
+  }
+
   calcSubtotal(price) {
     return this.isANumberFormat(
       price.base,
@@ -27,13 +54,13 @@ class Calculation {
   }
 
   calcCapTax(price) {
-    const tax = +this.calcSubtotal(price).replace(/[^0-9.-]+/g, '') * (+price.taxCap1 / 100);
+    const tax = Calculation.toNumber(this.calcSubtotal(price)) * (Calculation.toNumber(price.taxCap1) / 100);
     return this.isANumberFormat(tax);
   }
 
   calcCapCost(price) {
-    const capCost = +this.calcSubtotal(price).replace(/[^0-9.-]+/g, '');
-    const taxes = parseFloat(this.calcCapTax(price).replace(/[^0-9.-]+/g, ''));
+    const capCost = Calculation.toNumber(this.calcSubtotal(price));
+    const taxes = Calculation.toNumber(this.calcCapTax(price));
     return this.isANumberFormat(capCost + taxes);
   }
 
@@ -42,59 +69,157 @@ class Calculation {
   }
 
   calcNetLease(price) {
-    const capC = +this.calcCapCost(price).replace(/[^0-9.-]+/g, '');
-    const capR = +this.calcCapReduction(price).replace(/[^0-9.-]+/g, '');
-    return this.isANumberFormat(capC ? capC - capR : '');
+    const capCost = Calculation.toNumber(this.calcCapCost(price));
+    const capReduction = Calculation.toNumber(this.calcCapReduction(price));
+    return this.isANumberFormat(capCost - capReduction);
   }
 
   calcResidual(price) {
-    return this.isANumberFormat(+price.residualRate ? +price.residualMsrp * (+price.residualRate / 100) : '');
+    const residualRate = Calculation.toNumber(price.residualRate);
+    const residualMsrp = Calculation.toNumber(price.residualMsrp);
+    return this.isANumberFormat((residualMsrp * residualRate) / 100);
   }
 
-  calcAjustedResidual(price) {
-    const residual = +this.calcResidual(price).replace(/[^0-9.-]+/g, '');
-    const mlCharges = +price.mileageCharges ? +price.mileageCharges : 0;
-    return this.isANumberFormat(residual ? residual + mlCharges : '');
+  calcAdjustedResidual(price) {
+    const residual = Calculation.toNumber(this.calcResidual(price));
+    const mileageCharges = Calculation.toNumber(price.mileageCharges);
+    return this.isANumberFormat(residual + mileageCharges);
   }
 
-  calcPayment(price, mF) {
-    const residual = this.calcAjustedResidual(price).replace(/[^0-9.-]+/g, '');
-    const netLease = this.calcNetLease(price).replace(/[^0-9.-]+/g, '');
-    const depreciation = Number(netLease - residual);
-    const monthlyBasePMT = depreciation / +price.terms;
-    const moneyFactorValue = (+residual + +netLease) * ((!isNaN(parseFloat(price.rate)) && isFinite(price.rate) ? +price.rate : 0) / mF);
-    const basePmt = monthlyBasePMT + moneyFactorValue;
-    const tax1 = !isNaN(parseFloat(price.pst1)) ? price.pst1 : 0;
-    const tax2 = !isNaN(parseFloat(price.gsthst1)) ? price.gsthst1 : 0;
-    const monthly = !isNaN(parseFloat(basePmt)) ? basePmt : 0;
-    const biweekly = !isNaN(parseFloat(basePmt)) ? (monthly * 12) / 26 : 0;
-    const weekly = !isNaN(parseFloat(basePmt)) ? (monthly * 12) / 52 : 0;
+  calcPayment(price, moneyFactor) {
+    const residual = Calculation.toNumber(this.calcAdjustedResidual(price));
+    const netLease = Calculation.toNumber(this.calcNetLease(price));
+    const terms = Calculation.toNumber(price.terms);
+    const rate = Calculation.toNumber(price.rate);
 
-    return { monthly, biweekly, weekly, basePmt, tax1, tax2 };
+    const depreciation = terms > 0 ? (netLease - residual) / terms : 0;
+    const moneyFactorValue = (residual + netLease) * (rate / moneyFactor);
+    const basePayment = depreciation + moneyFactorValue;
+
+    const monthly = Number.isFinite(basePayment) ? basePayment : 0;
+    const biweekly = (monthly * 12) / 26;
+    const weekly = (monthly * 12) / 52;
+
+    return {
+      monthly,
+      biweekly,
+      weekly,
+      basePayment: monthly,
+      tax1: Calculation.toNumber(price.pst1),
+      tax2: Calculation.toNumber(price.gstHst1),
+    };
   }
 
-  renderPayment(pricing, moneyfactor, paymentEl, basePaymentEL, taxEl1, taxEl2) {
-    const payments = this.calcPayment(pricing, moneyfactor);
-    Object.entries(payments).forEach(([pF, pmt]) => {
-      if (pF === pricing.paymentFrequency?.toLowerCase() ?? '') {
-        const pst = !isNaN(parseFloat(pmt)) ? pmt * (payments.tax1 / 100) : 0;
-        const pstHst = !isNaN(parseFloat(pmt)) ? pmt * (payments.tax2 / 100) : 0;
-        const paymentTaxed = pmt + pst + pstHst;
+  // Ensures payment output is computed only when core lease inputs are present.
+  getMissingRequiredPaymentInputs(pricing) {
+    const requiredFields = [
+      { key: 'base', label: 'MSRP' },
+      { key: 'residualMsrp', label: 'Residual MSRP' },
+      { key: 'residualRate', label: 'Residual %' },
+      { key: 'rate', label: 'Rate %' },
+      { key: 'terms', label: 'Term' },
+    ];
 
-        // render tax (if any) + payments
-        basePaymentEL.value = roundOff(pmt);
-        taxEl1.value = pst ? roundOff(pst) : '';
-        taxEl2.value = pstHst ? roundOff(pstHst) : '';
-        paymentEl.textContent = `${roundOff(paymentTaxed).toLocaleString(undefined, {})}/${pF.toLowerCase()}`;
+    const missingNumeric = requiredFields
+      .filter(({ key }) => Calculation.toNumber(pricing[key]) <= 0)
+      .map(({ label }) => label);
 
-        function roundOff(num) {
-          return +(Math.round(num + 'e+2') + 'e-2');
-        }
-      }
+    const hasPaymentFrequency = typeof pricing.paymentFrequency === 'string' && pricing.paymentFrequency.trim().length > 0;
+    if (!hasPaymentFrequency) {
+      missingNumeric.push('Payment Frequency');
+    }
+
+    return missingNumeric;
+  }
+
+  hasRequiredPaymentInputs(pricing) {
+    return this.getMissingRequiredPaymentInputs(pricing).length === 0;
+  }
+
+  clearPaymentOutputs(paymentEl, basePaymentEl, taxEl1, taxEl2, paymentText = '0.00') {
+    basePaymentEl.value = '';
+    taxEl1.value = '';
+    taxEl2.value = '';
+    paymentEl.textContent = paymentText;
+  }
+
+  setPaymentHint(paymentHintEl, missingFields) {
+    if (!paymentHintEl) return;
+
+    const shouldShow = missingFields.length > 0;
+    paymentHintEl.classList.toggle('visible', shouldShow);
+    if (!shouldShow) {
+      paymentHintEl.textContent = '';
+      return;
+    }
+
+    const hasAnyInput = Object.values(this.pricingState ?? {}).some(value => {
+      if (typeof value !== 'string') return false;
+      return value.trim().length > 0;
     });
+
+    paymentHintEl.textContent = hasAnyInput ? `Missing: ${missingFields.join(', ')}` : 'Add inputs to calculate payment.';
+  }
+
+  // Renders payment, taxes and selected cadence (monthly/biweekly/weekly).
+  renderPayment(pricing, paymentEl, basePaymentEl, taxEl1, taxEl2, paymentHintEl) {
+    const missingRequiredFields = this.getMissingRequiredPaymentInputs(pricing);
+    const hasRequiredInputs = missingRequiredFields.length === 0;
+    this.setPaymentHint(paymentHintEl, missingRequiredFields);
+
+    if (!hasRequiredInputs) {
+      this.clearPaymentOutputs(paymentEl, basePaymentEl, taxEl1, taxEl2);
+      return;
+    }
+
+    const payments = this.calcPayment(pricing, this.moneyFactor);
+    const paymentKey = pricing.paymentFrequency?.toLowerCase();
+    const selectedPayment = payments[paymentKey] ?? 0;
+
+    const pst = selectedPayment * (payments.tax1 / 100);
+    const gstHst = selectedPayment * (payments.tax2 / 100);
+    const paymentTaxed = selectedPayment + pst + gstHst;
+
+    basePaymentEl.value = Calculation.roundToTwo(selectedPayment);
+    taxEl1.value = pst ? Calculation.roundToTwo(pst) : '';
+    taxEl2.value = gstHst ? Calculation.roundToTwo(gstHst) : '';
+    paymentEl.textContent = `${Calculation.roundToTwo(paymentTaxed).toLocaleString()}/${paymentKey || 'monthly'}`;
+  }
+
+  updateTotals(pricing, elements) {
+    const terms = Calculation.toNumber(pricing.terms);
+    const annualKm = Calculation.toNumber(pricing.annualKm);
+    const paymentsPerYear = this.paymentFrequency[pricing.paymentFrequency] ?? 0;
+
+    elements.numberOfPayments.value = terms > 0 ? (terms / 12) * paymentsPerYear : '';
+    elements.totalKms.value = terms > 0 && annualKm > 0 ? `${((terms / 12) * annualKm).toLocaleString()}KM` : '';
+  }
+
+  updateDerivedFields(pricing, elements) {
+    // Keep UI field updates declarative: each output maps to one resolver.
+    const fieldMappers = {
+      capSubtotal: () => this.calcSubtotal(pricing),
+      taxCap: () => this.calcCapTax(pricing),
+      capCost: () => this.calcCapCost(pricing),
+      totalReduction: () => this.calcCapReduction(pricing),
+      netLease: () => this.calcNetLease(pricing),
+      residualAmount: () => this.calcResidual(pricing),
+      adjustedResidual: () => this.calcAdjustedResidual(pricing),
+      buyOption: () => this.calcAdjustedResidual(pricing),
+      basePrice: () => this.isANumberFormat(pricing.base, pricing.option),
+      sellingPrice: () => this.isANumberFormat(pricing.base, pricing.option),
+    };
+
+    Object.entries(fieldMappers).forEach(([elementKey, resolver]) => {
+      elements[elementKey].value = resolver();
+    });
+
+    this.updateTotals(pricing, elements);
+    this.renderPayment(pricing, elements.payment, elements.basePayment, elements.pst2, elements.gstHst2, elements.paymentHint);
   }
 
   calculate(elements) {
+    // Maps pricing object keys to corresponding input/select class names.
     const objectData = {
       base: 'msrp',
       option: 'make_options',
@@ -117,85 +242,51 @@ class Calculation {
       terms: 'terms',
       paymentFrequency: 'payment_frequency',
       pst1: 'pst_1',
-      gsthst1: 'gst_hst_1',
+      gstHst1: 'gst_hst_1',
     };
 
-    const functObject = {
-      basePrice: 'isANumberFormat',
-      sellingPrice: 'isANumberFormat',
-      capSubtotal: 'calcSubtotal',
-      taxCap: 'calcCapTax',
-      capCost: 'calcCapCost',
-      totalReduction: 'calcCapReduction',
-      netLease: 'calcNetLease',
-      residualAmount: 'calcResidual',
-      adustedResidual: 'calcAjustedResidual',
-      buyOption: 'calcAjustedResidual',
-    };
     const pricing = {};
-    const paymentFrequency = this.paymentFrequency;
-    const moneyFactor = this.moneyFactor;
+    this.pricingState = pricing;
+
+    // A single unified listener keeps all derived UI values in sync.
+    const onValueChange = e => {
+      for (const [key, className] of Object.entries(objectData)) {
+        if (e.target.matches(`.${className}`)) {
+          pricing[key] = e.target.value;
+          break;
+        }
+      }
+
+      this.updateDerivedFields(pricing, elements);
+    };
 
     this.prices.forEach(el => {
-      el.addEventListener('input', function (e) {
-        for (const [key, val] of Object.entries(objectData)) {
-          if (e.target.matches(`.${val}`)) {
-            pricing[key] = e.target.value;
-          }
-        }
-
-        for (const [el, func] of Object.entries(functObject)) {
-          if (el === 'basePrice' || el === 'sellingPrice') {
-            elements[el].value = new Calculation().isANumberFormat(pricing.base, pricing.option);
-          } else {
-            elements[el].value = new Calculation()[func](pricing);
-          }
-        }
-
-        //renderPayment
-        new Calculation().renderPayment(pricing, moneyFactor, elements.payment, elements.basePayment, elements.pst2, elements.gsthst2);
-
-        if (e.target.matches('.terms,.payment_frequency,.annual_km')) {
-          el.addEventListener('change', function (e) {
-            const terms = +pricing.terms;
-            const pmtFreq = pricing.paymentFrequency;
-            const km = pricing.annualKm?.replace(/[^0-9.-]+/g, '') ?? '';
-            const kmYr = !isNaN(parseFloat(terms)) && isFinite(terms) ? (terms / 12) * +km : '';
-
-            //reset numberOfPayments
-            elements.numberOfPayments.value = '';
-
-            Object.entries(paymentFrequency).forEach(([pF, num]) => {
-              if (pF === pmtFreq) elements.numberOfPayments.value = (terms / 12) * num;
-            });
-
-            //renderPayment total KMs
-            elements.totalKms.value = kmYr ? kmYr.toLocaleString(undefined, {}) + 'KM' : '';
-
-            //renderPayment
-            new Calculation().renderPayment(pricing, moneyFactor, elements.payment, elements.basePayment, elements.pst2, elements.gsthst2);
-          });
-        }
-      });
+      el.addEventListener('input', onValueChange);
+      el.addEventListener('change', onValueChange);
     });
 
-    // reload
-    const allInputs = this.prices;
-    elements.resetBtn.addEventListener('click', function (e) {
-      window.location.reload();
-      /**If Needs to just clear input fields */
-      /*
-      allInputs.forEach(el => {
-        if (el.matches('input:read-only')) {
-          el.value = '0.00';
-        } else if (el.matches('select')) {
-          el.selectedIndex = 0;
-        } else {
-          el.value = '';
-        }
+    // Clears every field in-place without a full page reload.
+    elements.resetBtn.addEventListener('click', () => {
+      Object.keys(pricing).forEach(key => {
+        delete pricing[key];
       });
-      document.querySelector('.payment').textContent = '0.00';
-      */
+
+      this.prices.forEach(field => {
+        field.classList.remove('not-a-number', 'reset-not-a-number');
+
+        if (field.matches('select')) {
+          if (field.matches('.annual_km')) {
+            field.innerHTML = '<option value="">Choose...</option>';
+          }
+          field.selectedIndex = 0;
+          return;
+        }
+
+        field.value = '';
+      });
+
+      this.clearPaymentOutputs(elements.payment, elements.basePayment, elements.pst2, elements.gstHst2, '');
+      this.setPaymentHint(elements.paymentHint, this.getMissingRequiredPaymentInputs(pricing));
     });
   }
 }

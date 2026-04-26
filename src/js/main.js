@@ -3,37 +3,69 @@ import { DATA_SUPPLEMENTAL as data } from './dataReference.js';
 import loadDropdownOptions from './renderDropdowns.js';
 import Calculation from './renderCalculation.js';
 
-//check input values
+/**
+ * Application entry module.
+ * - Normalizes user input formatting (focus/blur behavior)
+ * - Initializes dropdown options from static reference data
+ * - Wires the calculator engine to DOM elements
+ */
+const CURRENCY_PATTERN = /[^0-9.-]+/g;
+const THOUSAND_SEPARATOR_PATTERN = /\d(?=(\d{3})+\.)/g;
+
+// Keeps text fields currency-friendly while preserving manual user entry flow.
 const activateInputWatcher = () => {
   const inputs = document.querySelectorAll('form input');
 
-  const onFocus = function (e) {
-    const value = e.target.value;
-    const resetNotANumber = () => (e.target.classList.remove('not-a-number'), e.target.classList.add('reset-not-a-number'), '');
-    e.target.value = value !== '*Not-A-Number*' && value !== '*NAN*' && value ? +String(value).replace(this, '') : resetNotANumber();
+  const onFocus = e => {
+    const input = e.target;
+    const rawValue = input.value;
+    const isNaNMarker = rawValue === '*Not-A-Number*' || rawValue === '*NAN*';
+
+    if (isNaNMarker || !rawValue) {
+      input.classList.remove('not-a-number');
+      input.classList.add('reset-not-a-number');
+      input.value = '';
+      return;
+    }
+
+    input.value = Number(String(rawValue).replace(CURRENCY_PATTERN, ''));
   };
 
-  const onBlur = function (e) {
-    const value = e.target.value;
-    const notANumber = () => (e.target.classList.add('not-a-number'), e.target.matches('.tax') ? '*NAN*' : '*Not-A-Number*');
-    e.target.value =
-      !isNaN(parseFloat(value)) && isFinite(value) ? (+value).toFixed(2).replace(this, '$&,') : isNaN(value) ? notANumber() : '';
+  const onBlur = e => {
+    const input = e.target;
+    const value = input.value;
+    const parsed = Number.parseFloat(value);
+    const isNumeric = Number.isFinite(parsed);
+
+    if (isNumeric) {
+      input.value = parsed.toFixed(2).replace(THOUSAND_SEPARATOR_PATTERN, '$&,');
+      return;
+    }
+
+    if (value) {
+      input.classList.add('not-a-number');
+      input.value = input.matches('.tax') ? '*NAN*' : '*Not-A-Number*';
+      return;
+    }
+
+    input.value = '';
   };
 
   inputs.forEach(el => {
     if (el.readOnly) return;
-    el.addEventListener('focus', onFocus.bind(/[^0-9.-]+/g));
-    el.addEventListener('blur', onBlur.bind(/\d(?=(\d{3})+\.)/g));
+    el.addEventListener('focus', onFocus);
+    el.addEventListener('blur', onBlur);
   });
 
+  // Keep existing Bootstrap tooltip behavior.
   $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
   });
 };
 
-// get input values and render calculations
+// Wires input elements into the calculation engine.
 const calculateLeases = function ({ moneyFactor, points, paymentFrequency }) {
-  const values = document.querySelectorAll('select,input');
+  const values = document.querySelectorAll('select, input');
   const inputElements = {
     basePrice: document.querySelector('.base_selling_price'),
     sellingPrice: document.querySelector('.selling_price'),
@@ -43,14 +75,15 @@ const calculateLeases = function ({ moneyFactor, points, paymentFrequency }) {
     totalReduction: document.querySelector('.total_reduction'),
     netLease: document.querySelector('.net_lease'),
     residualAmount: document.querySelector('.residual_amount'),
-    adustedResidual: document.querySelector('.adusted_residual'),
+    adjustedResidual: document.querySelector('.adjusted_residual'),
     numberOfPayments: document.querySelector('.number_of_payments'),
     totalKms: document.querySelector('.total_kms'),
     buyOption: document.querySelector('.buy_option'),
     basePayment: document.querySelector('.base_payment'),
     pst2: document.querySelector('.pst_2'),
-    gsthst2: document.querySelector('.gst_hst_2'),
+    gstHst2: document.querySelector('.gst_hst_2'),
     payment: document.querySelector('.payment'),
+    paymentHint: document.querySelector('.payment_hint'),
     resetBtn: document.querySelector('.reset_lease_btn'),
   };
 
@@ -58,6 +91,7 @@ const calculateLeases = function ({ moneyFactor, points, paymentFrequency }) {
   amounts.calculate(inputElements);
 };
 
+// App bootstrap sequence: UI helpers, dropdown data, then calculations.
 const init = function () {
   activateInputWatcher();
   loadDropdownOptions(this);

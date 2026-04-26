@@ -1,40 +1,56 @@
 'use strict';
-// Render  dropdown options
-const loadOptionElements = (element, content) => {
-  const options = document.createElement('option');
-  options.textContent = content;
-  element.appendChild(options);
+
+/**
+ * Dropdown renderer module.
+ * Loads make/term/payment-frequency options and updates annual KM options
+ * based on the selected vehicle make.
+ */
+// Appends an option element to a target dropdown.
+const appendOption = (dropdown, content) => {
+  const option = document.createElement('option');
+  option.textContent = content;
+  dropdown.appendChild(option);
 };
 
-const getSelectedMake = function (e) {
-  this.limits.forEach(el => {
-    if (Object.keys(el)[0] === e.target.value) {
-      this.kms.innerHTML = `<option>Choose...</option>`;
-      Object.values(el)[0].forEach(km => {
-        loadOptionElements(this.kms, km);
-      });
-    }
+// Normalizes option data that can be primitives or single-key objects.
+const normalizeOptionValue = option => {
+  if (typeof option === 'object' && !Array.isArray(option) && option !== null) {
+    return Object.keys(option)[0];
+  }
+  return option;
+};
+
+const populateDropdown = (options, dropdown) => {
+  options.forEach(option => {
+    appendOption(dropdown, normalizeOptionValue(option));
   });
 };
 
-const interateOptions = (options, dropdown, func) => {
-  options.forEach(option => {
-    option = typeof option === 'object' && !Array.isArray(option) && option !== null ? Object.keys(option)[0] : option;
-    func(dropdown, option);
+const onMakeSelected = function (e) {
+  const selectedMake = e.target.value;
+  const makeMileageEntry = this.limits.find(limit => Object.keys(limit)[0] === selectedMake);
+
+  this.kms.innerHTML = '<option>Choose...</option>';
+
+  if (!makeMileageEntry) return;
+
+  Object.values(makeMileageEntry)[0].forEach(km => {
+    appendOption(this.kms, km);
   });
 };
 
 const loadDropdownOptions = ({ mileageLimits, terms, paymentFrequency }) => {
+  // Query once and reuse references to avoid repeated DOM traversal.
   const makesDropdown = document.querySelector('.makes');
   const kmsDropdown = document.querySelector('.annual_km');
   const termsDropdown = document.querySelector('.terms');
-  const pmtFreqDropdown = document.querySelector('.payment_frequency');
+  const paymentFrequencyDropdown = document.querySelector('.payment_frequency');
 
-  interateOptions(mileageLimits, makesDropdown, loadOptionElements);
-  interateOptions(terms, termsDropdown, loadOptionElements);
-  interateOptions(Object.keys(paymentFrequency), pmtFreqDropdown, loadOptionElements);
+  populateDropdown(mileageLimits, makesDropdown);
+  populateDropdown(terms, termsDropdown);
+  populateDropdown(Object.keys(paymentFrequency), paymentFrequencyDropdown);
 
-  makesDropdown.addEventListener('change', getSelectedMake.bind({ limits: mileageLimits, kms: kmsDropdown }));
+  makesDropdown.addEventListener('change', onMakeSelected.bind({ limits: mileageLimits, kms: kmsDropdown }));
 };
 
 export default loadDropdownOptions;

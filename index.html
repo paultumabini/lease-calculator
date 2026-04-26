@@ -142,8 +142,8 @@
                   <input  type="text"  placeholder="0.00" name="mileage_charges" class="variable mileage_charges" maxlength="10" />
                 </div>
                 <div class="control">
-                  <label for="adusted_residual" class="label_total">Adjusted Residual</label>
-                  <input  type="text"  placeholder="0.00" value="0.00" name="adusted_residual" class="variable adusted_residual" maxlength="10" readonly />
+                  <label for="adjusted_residual" class="label_total">Adjusted Residual</label>
+                  <input  type="text"  placeholder="0.00" value="0.00" name="adjusted_residual" class="variable adjusted_residual" maxlength="10" readonly />
                 </div>
               </fieldset>
             </form>          
@@ -177,7 +177,7 @@
                 <div class="control">
                   <label for="buy_option" class="label_total">Buy Option</label>
                    
-                  <input  type="text"  value="0.00" placeholder="0.00"  name="adusted_residual" class="variable buy_option" maxlength="10" readonly />
+                  <input  type="text"  value="0.00" placeholder="0.00"  name="adjusted_residual" class="variable buy_option" maxlength="10" readonly />
                 </div>
                 <br>
                 <div class="control">
@@ -199,6 +199,9 @@
                 <br>
               <fieldset class="payment_label">
                 <legend class="payment_label">Payment</legend>
+                <p class="payment_hint" aria-live="polite">
+                  Enter required values (MSRP, Residual MSRP, Residual %, Rate, Term, and Payment Frequency) to calculate payment.
+                </p>
                 <div class="payment">0.00               
                 </div>               
               </fieldset>

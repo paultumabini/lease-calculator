@@ -1,3 +1,9 @@
+/*
+ * Lease Calculator UI styles
+ * - Layout and responsive spacing
+ * - Form controls and calculated output states
+ * - Payment panel and inline validation hint presentation
+ */
 * {
   margin: 0;
   padding: 0;
@@ -186,6 +192,11 @@ input[readonly] {
 
 fieldset.payment_label {
   height: 8.3rem;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1.7rem;
 }
 
 .payment_label {
@@ -194,9 +205,35 @@ fieldset.payment_label {
 }
 
 .payment {
-  transform: translatey(35%);
+  transform: none;
   font-size: 2rem;
   font-weight: 500;
+  line-height: 1;
+}
+
+.payment_hint {
+  position: absolute;
+  left: 50%;
+  bottom: -0.1rem;
+  transform: translateX(-50%);
+  max-width: calc(100% - 1rem);
+  padding: 0.2rem 0.45rem;
+  border-radius: 3px;
+  font-size: 0.67rem;
+  font-weight: 500;
+  text-align: center;
+  color: #6f2d10;
+  background-color: rgba(231, 187, 161, 0.45);
+  visibility: hidden;
+  line-height: 1.1;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.payment_hint.visible {
+  visibility: visible;
 }
 
 .reset_lease_btn {
@@ -237,12 +274,13 @@ input[type='number']::-webkit-outer-spin-button {
   color: #bbb;
 }
 
+/* Returns inputs to neutral styling after invalid markers are cleared. */
 .reset-not-a-number {
   border: 1px solid #9c9c9c;
-  color: fff;
+  color: #fff;
 }
 
-/* simple color validation*/
+/* Visual indicator for invalid numeric/tax entries. */
 .not-a-number {
   border: 2.5px solid #e74c3c;
   color: #e74c3c;
@@ -266,6 +304,7 @@ input::-webkit-inner-spin-button {
 }
 /* Firefox */
 input[type='number'] {
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 

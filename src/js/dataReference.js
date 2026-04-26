@@ -1,3 +1,4 @@
+// Static reference data used to populate dropdowns and drive lease calculations.
 export const DATA_SUPPLEMENTAL = {
   mileageLimits: [
     { Acura: ['24,000KM', '20,000KM', '16,000KM', '12,000KM'] },
