@@ -1,8 +1,8 @@
-# Lease Calculator
+# Vehicle Lease Calculator
 
 A lightweight vanilla JavaScript lease worksheet for vehicle financing scenarios.
 
-Live demo: [https://leasecalculator.netlify.app/](https://leasecalculator.netlify.app/)
+Live demo: [https://vehicle-lease-calculator.vercel.app/](https://vehicle-lease-calculator.vercel.app/)
 
 ## Overview
 
