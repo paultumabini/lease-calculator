@@ -80,6 +80,7 @@ Then open:
 
 - Annual KM options depend on the selected make.
 - Payment output is intentionally gated until required fields are provided.
+- The calculator is intended as a quick estimation tool for lease scenarios.
 
 ## License
 
