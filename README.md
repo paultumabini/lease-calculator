@@ -28,6 +28,10 @@ This project provides an interactive lease calculator that helps estimate:
 - Vanilla JavaScript (ES Modules)
 - Bootstrap (styling utilities + tooltip behavior)
 
+## Browser support
+
+Use a current evergreen browser (Chrome, Edge, Firefox, or Safari). The app relies on ES modules (`import` / `export`), which require a local or hosted HTTP origin—not `file://` URLs.
+
 ## Project Structure
 
 ```text
