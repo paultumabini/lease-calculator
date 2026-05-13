@@ -4,6 +4,10 @@ A lightweight vanilla JavaScript lease worksheet for vehicle financing scenarios
 
 Live demo: [https://vehicle-lease-calculator.vercel.app/](https://vehicle-lease-calculator.vercel.app/)
 
+## Deployment
+
+Production is hosted on **Vercel**. When the project is linked to this GitHub repository, merges into `main` update the live demo URL above.
+
 ## Overview
 
 This project provides an interactive lease calculator that helps estimate:
