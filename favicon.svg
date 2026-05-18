@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Vehicle Lease Calculator">
+  <rect width="32" height="32" rx="7" fill="#059669"/>
+  <g fill="#f4f4f5">
+    <path d="M5 17.5h22v4.5H5z"/>
+    <path d="M7.5 12h7.5l3 5.5H7.5z"/>
+  </g>
+  <circle cx="10" cy="22.5" r="2.25" fill="#047857"/>
+  <circle cx="22" cy="22.5" r="2.25" fill="#047857"/>
+</svg>

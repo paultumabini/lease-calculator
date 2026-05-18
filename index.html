@@ -4,22 +4,29 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@600&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://use.fontawesome.com/releases/v5.0.4/css/all.css" rel="stylesheet" />
     <link rel="stylesheet" href="./src/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="./src/css/style.css" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
 
-    <title>Lease Calculator</title>
+    <title>Vehicle Lease Calculator</title>
   </head>
   <body>
-    <main class="lease-calculator d-flex flex-column overflow-auto">    
+    <main class="lease-calculator d-flex flex-column">    
       <div class="calc-content">
         <div class="border">   
-          <div align="center" class="heading-bar"><span>Lease Calculator/ Worksheet</span></div>
+          <header class="heading-bar">
+            <div class="heading-lead">
+              <h1 class="heading-title">Vehicle Lease Calculator</h1>
+              <p class="heading-sub">Lease payment worksheet</p>
+            </div>
+            <button type="button" class="btn reset_lease_btn">Reset</button>
+          </header>
           <div class="row-section first-row slide-up">
             <form>
               <fieldset>
-                <legend>Options</legend>
+                <legend class="legend-pillar">Options</legend>
                 <div class="control invalid">
                   <label for="makes"> Make</label>
                   <select class="dropdown makes success" name="makes">
@@ -84,7 +91,7 @@
             </form>   
             <form>
               <fieldset>
-                <legend>Cap Reduction</legend>
+                <legend class="legend-pillar">Cap Reduction</legend>
                 <div class="control ">
                   <label for="rebates">Rebates</label>
                    
@@ -149,7 +156,7 @@
             </form>          
             <form>
               <fieldset>
-                <legend>Payment</legend>  
+                <legend class="legend-pillar">Payment</legend>  
                 <div class="control">
                   <label for="rate">Rate % <em class="fa fa-asterisk" fa_custom fa-1x red-tooltip" data-placement="top" data-toggle="tooltip" data-original-title="Required Input"></em></label>                   
                   <input  type="text"  placeholder="0.00" name="rate" class="variable rate" maxlength="10" />
@@ -207,11 +214,6 @@
               </fieldset>
             </form>
         </div>        
-        <div align="center" class="">
-          <div >           
-            <button type="button" class="btn btn-secondary reset_lease_btn">RESET</button>
-          </div>
-         </div>
       </div>
              
     </main>

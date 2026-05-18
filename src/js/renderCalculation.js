@@ -285,7 +285,7 @@ class Calculation {
         field.value = '';
       });
 
-      this.clearPaymentOutputs(elements.payment, elements.basePayment, elements.pst2, elements.gstHst2, '');
+      this.clearPaymentOutputs(elements.payment, elements.basePayment, elements.pst2, elements.gstHst2);
       this.setPaymentHint(elements.paymentHint, this.getMissingRequiredPaymentInputs(pricing));
     });
   }
