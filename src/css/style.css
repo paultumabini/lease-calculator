@@ -838,16 +838,28 @@ input[type='number'] {
   border-top-color: var(--text);
 }
 
-/* Font Awesome markers next to labels (tooltip triggers) */
+/* Font Awesome markers in label text — must stay in flow (not absolute) so they
+   scroll correctly inside overflow-y:auto form columns. */
 .fa {
-  position: absolute;
-  margin-left: 3px;
+  position: static;
+  display: inline;
+  margin-left: 0.25em;
+  vertical-align: 0.08em;
   color: var(--accent);
-  cursor: pointer;
+  cursor: help;
+  line-height: inherit;
 }
 
 .fa-asterisk {
-  font-size: 0.5rem !important;
+  font-size: 0.65em !important;
+  vertical-align: 0.2em;
+}
+
+/* Beat Font Awesome defaults so glyphs stay in flow inside scrolling form columns */
+.control label .fa {
+  position: static !important;
+  display: inline !important;
+  float: none !important;
 }
 
 /* ≤600px: stack labels above fields, larger tap targets, scroll the page */
@@ -891,8 +903,6 @@ input[type='number'] {
     width: 100%;
     display: block;
     margin-bottom: 0.35rem;
-    position: relative;
-    padding-right: 1.25rem;
   }
 
   .variable,
