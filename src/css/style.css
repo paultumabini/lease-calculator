@@ -2,6 +2,7 @@
  * Vehicle lease worksheet — high-trust consumer fintech visual language
  * Cool neutrals, emerald accent, stacked cards, clear numeric hierarchy
  */
+/* --- Tokens: palette, radii, shadows, UI + mono font stacks --- */
 :root {
   --bg: #f4f4f5;
   --surface: #ffffff;
@@ -29,6 +30,7 @@
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
+/* --- Global box model --- */
 * {
   margin: 0;
   padding: 0;
@@ -39,6 +41,7 @@ html {
   box-sizing: border-box;
 }
 
+/* --- Page shell (<1024px scrolls; desktop locks body — see media query) --- */
 body {
   min-width: 320px;
   font-family: var(--font);
@@ -50,17 +53,20 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Main block vertical rhythm */
 main.lease-calculator {
   min-height: 100vh;
   padding: clamp(1rem, 4vw, 2.5rem) 0 2rem;
 }
 
+/* Layout wrapper (no chrome; cards are .row-section form) */
 .border {
   margin: 0;
   border: none;
   border-radius: 0;
 }
 
+/* Content width: capped on small/medium; full bleed in desktop grid */
 .calc-content {
   flex: 1 1 auto;
   width: 100%;
@@ -69,7 +75,7 @@ main.lease-calculator {
   padding: 0 1rem;
 }
 
-/* ——— Header ——— */
+/* --- Header: title + subtitle + reset (reset moves to row on ≥1024px) --- */
 .heading-bar {
   display: flex;
   flex-direction: column;
@@ -114,6 +120,7 @@ main.lease-calculator {
   letter-spacing: -0.01em;
 }
 
+/* <1024px: stack the three worksheet columns; page scrolls */
 .row-section {
   display: flex;
   flex-direction: column;
@@ -121,6 +128,7 @@ main.lease-calculator {
   padding: 0;
 }
 
+/* One “card” per column / stacked section */
 .row-section form {
   width: 100%;
   min-width: 0;
@@ -131,7 +139,9 @@ main.lease-calculator {
   overflow: hidden;
 }
 
-/* Desktop: one viewport — three columns, compact density, no page scroll */
+/* Desktop: fit worksheet in one viewport (no body scroll).
+ * Columns 1–2 can overflow vertically (two fieldsets each); per-form overflow-y
+ * keeps bottom fields (e.g. Capitalized Cost, Adjusted Residual) reachable. */
 @media (min-width: 1024px) {
   html {
     height: 100%;
@@ -196,6 +206,7 @@ main.lease-calculator {
     font-size: 0.68rem;
   }
 
+  /* Compact reset: leaves more height for the three-column grid */
   .reset_lease_btn {
     flex-shrink: 0;
     align-self: flex-end;
@@ -206,6 +217,7 @@ main.lease-calculator {
     border-radius: 6px;
   }
 
+  /* Options | Cap & residual | Payment — equal-height columns */
   .row-section {
     flex: 1;
     min-height: 0;
@@ -221,12 +233,25 @@ main.lease-calculator {
     display: none;
   }
 
+  /* Tall cards need an internal scrollbar; overflow hidden clipped last rows. */
   .row-section form {
     height: 100%;
     min-height: 0;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #c4c4cc var(--surface);
+  }
+
+  .row-section form::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .row-section form::-webkit-scrollbar-thumb {
+    background: #c4c4cc;
+    border-radius: 99px;
   }
 
   .row-section form fieldset {
@@ -288,6 +313,7 @@ main.lease-calculator {
     border-radius: 6px;
   }
 
+  /* Readonly fields: inherit colors/borders from base rule; shrink type with inputs. */
   input[readonly] {
     font-size: 0.72rem;
     padding-left: 6px;
@@ -310,6 +336,7 @@ main.lease-calculator {
   }
 }
 
+/* Laptop-height: denser rows without changing breakpoints */
 @media (min-width: 1024px) and (max-height: 760px) {
   .heading-title {
     font-size: 1.05rem;
@@ -335,6 +362,7 @@ main.lease-calculator {
   }
 }
 
+/* Small-height 1024px+ viewports: optional micro-scale on the sheet */
 @media (min-width: 1024px) and (max-height: 640px) {
   main.lease-calculator {
     padding-top: 0.25rem;
@@ -351,6 +379,8 @@ main.lease-calculator {
   }
 }
 
+/* Entry animation on .row-section.first-row (see index.html). */
+.slide-up {
   opacity: 1;
   animation-name: slideUpOpacity;
   animation-iteration-count: 1;
@@ -369,6 +399,7 @@ main.lease-calculator {
   }
 }
 
+/* Secondary fade utility (available for future markup) */
 .fade-in {
   opacity: 1;
   animation-name: fadeInOpacity;
@@ -386,13 +417,14 @@ main.lease-calculator {
   }
 }
 
+/* Taller stacked layout only when not in desktop grid */
 @media (min-height: 850px) and (max-width: 1023px) {
   main.lease-calculator {
     padding-top: 2.5rem;
   }
 }
 
-/* ——— Fieldsets ——— */
+/* --- Fieldsets: sections inside each <form> card; dividers between stacks --- */
 fieldset {
   margin: 0;
   padding: 1.125rem 1.25rem;
@@ -436,6 +468,7 @@ legend.legend-pillar {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
+/* Form row: label + field (stacked on phone; inline on wider screens) */
 .control {
   margin-bottom: 0.5rem;
 }
@@ -464,6 +497,7 @@ label {
   margin-bottom: unset;
 }
 
+/* Currency-style inputs & selects: tabular numerals */
 .variable,
 .dropdown {
   font-family: var(--font-mono);
@@ -509,6 +543,7 @@ input:not([readonly]):focus,
   background-color: #fff;
 }
 
+/* Narrow paired fields (% + computed amount) for cap / PST / GST rows */
 .tax {
   position: relative;
   left: 1px;
@@ -541,6 +576,7 @@ input:not([readonly]):focus,
   background: #fff;
 }
 
+/* Calculated / read-only outputs: distinct from editable (#field-fill) inputs. */
 input[readonly] {
   background-color: var(--readonly-fill);
   border: 1px solid var(--readonly-border);
@@ -556,6 +592,7 @@ input[readonly] {
   text-align: center;
 }
 
+/* Emphasized payment result panel (third column, bottom fieldset) */
 fieldset.payment_label {
   position: relative;
   display: flex;
@@ -599,6 +636,7 @@ fieldset.payment_label .payment_hint {
   order: 3;
 }
 
+/* Large tabular total; text filled by renderCalculation.js */
 .payment {
   transform: none;
   font-family: var(--font-mono);
@@ -617,6 +655,7 @@ fieldset.payment_label .payment_hint {
   flex: 0 0 auto;
 }
 
+/* Missing-field hint under payment amount; .visible from setPaymentHint() in renderCalculation.js */
 .payment_hint {
   display: none;
   position: static;
@@ -644,6 +683,7 @@ fieldset.payment_label .payment_hint {
   display: block;
 }
 
+/* Clear form: emerald CTA; in header on desktop, full-width on phone */
 .reset_lease_btn {
   width: auto;
   min-width: 7.25rem;
@@ -690,7 +730,7 @@ fieldset.payment_label .payment_hint {
   transform: translateY(1px);
 }
 
-/* Bootstrap `.btn` defaults would flatten the primary styling */
+/* Bootstrap .btn would override gradient/fill if this block is omitted. */
 .btn.reset_lease_btn,
 .btn.reset_lease_btn:focus {
   color: #fff;
@@ -712,6 +752,7 @@ button.load-points {
   margin-top: 1.5px;
 }
 
+/* Hide native spinners on numeric inputs */
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -731,6 +772,7 @@ input[type='number']::-webkit-outer-spin-button {
   color: #a1a1aa;
 }
 
+/* Validation: JS swaps .not-a-number / .reset-not-a-number */
 .reset-not-a-number {
   border: 1px solid var(--line-strong);
   color: var(--text);
@@ -761,6 +803,7 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+/* Page-level scrollbar (body still scrolls when not desktop-locked) */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -778,6 +821,7 @@ input[type='number'] {
   background: #a1a1aa;
 }
 
+/* Bootstrap tooltip chrome (required/help icons on labels) */
 .tooltip-inner {
   background-color: var(--text) !important;
   color: #fafafa !important;
@@ -794,17 +838,31 @@ input[type='number'] {
   border-top-color: var(--text);
 }
 
+/* Font Awesome markers in label text — must stay in flow (not absolute) so they
+   scroll correctly inside overflow-y:auto form columns. */
 .fa {
-  position: absolute;
-  margin-left: 3px;
+  position: static;
+  display: inline;
+  margin-left: 0.25em;
+  vertical-align: 0.08em;
   color: var(--accent);
-  cursor: pointer;
+  cursor: help;
+  line-height: inherit;
 }
 
 .fa-asterisk {
-  font-size: 0.5rem !important;
+  font-size: 0.65em !important;
+  vertical-align: 0.2em;
 }
 
+/* Beat Font Awesome defaults so glyphs stay in flow inside scrolling form columns */
+.control label .fa {
+  position: static !important;
+  display: inline !important;
+  float: none !important;
+}
+
+/* ≤600px: stack labels above fields, larger tap targets, scroll the page */
 @media (max-width: 600px) {
   main.lease-calculator {
     padding: 0.75rem 0 1.25rem;
@@ -845,8 +903,6 @@ input[type='number'] {
     width: 100%;
     display: block;
     margin-bottom: 0.35rem;
-    position: relative;
-    padding-right: 1.25rem;
   }
 
   .variable,
