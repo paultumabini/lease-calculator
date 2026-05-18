@@ -1,9 +1,34 @@
 /*
- * Lease Calculator UI styles
- * - Layout and responsive spacing
- * - Form controls and calculated output states
- * - Payment panel and inline validation hint presentation
+ * Vehicle lease worksheet — high-trust consumer fintech visual language
+ * Cool neutrals, emerald accent, stacked cards, clear numeric hierarchy
  */
+:root {
+  --bg: #f4f4f5;
+  --surface: #ffffff;
+  --line: #e4e4e7;
+  --line-strong: #d4d4d8;
+  --text: #18181b;
+  --text-secondary: #52525b;
+  --text-tertiary: #71717a;
+  --accent: #059669;
+  --accent-hover: #047857;
+  --accent-muted: #d1fae5;
+  --accent-ring: rgba(5, 150, 105, 0.22);
+  --field-fill: #ffffff;
+  --readonly-fill: #e6e8ee;
+  --readonly-border: #c5cad4;
+  --danger: #dc2626;
+  --warn-bg: #fffbeb;
+  --warn-border: #fde68a;
+  --warn-text: #92400e;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.04);
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -15,52 +40,332 @@ html {
 }
 
 body {
-  min-width: 550px;
-  background: linear-gradient(to top left, #368277 0%, #73bf2e30 100%) no-repeat center center fixed;
-  overflow: auto;
-  background-size: cover;
+  min-width: 320px;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+  overflow-x: hidden;
+  overflow-y: auto;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+main.lease-calculator {
+  min-height: 100vh;
+  padding: clamp(1rem, 4vw, 2.5rem) 0 2rem;
 }
 
 .border {
-  margin: 0.5rem;
-  border: 1px solid #d1d1d1;
-  border-radius: 5px;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.calc-content {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 38rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ——— Header ——— */
+.heading-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  margin: 0 0 1.75rem;
+  padding: 0 0.125rem;
+  text-align: left;
+  background: none;
+  border: none;
+}
+
+.heading-lead {
+  flex: 1;
+  min-width: 0;
+}
+
+.heading-lead::after {
+  content: '';
+  display: block;
+  width: 2.75rem;
+  height: 3px;
+  margin-top: 1rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent) 0%, #34d399 100%);
+}
+
+.heading-title {
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 1.875rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--text);
+  line-height: 1.15;
+}
+
+.heading-sub {
+  margin: 0.375rem 0 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: -0.01em;
 }
 
 .row-section {
   display: flex;
-  justify-content: space-evenly;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 0;
 }
 
-.calc-content {
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
-  padding: 0.5rem 2rem;
-  border-radius: 5px;
-  margin: 2.5rem 8%;
-  background-color: #f8fbe8;
-  box-shadow: 0px 1px 8px 5px rgb(0 0 0 / 30%);
+.row-section form {
+  width: 100%;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
 }
 
-.slide-up {
+/* Desktop: one viewport — three columns, compact density, no page scroll */
+@media (min-width: 1024px) {
+  html {
+    height: 100%;
+  }
+
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  main.lease-calculator {
+    height: 100vh;
+    max-height: 100vh;
+    min-height: 0;
+    padding: 0.3rem 0.55rem 0.35rem;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .calc-content {
+    max-width: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 0 0.35rem;
+    box-sizing: border-box;
+  }
+
+  .border {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .heading-bar {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.65rem;
+    flex-shrink: 0;
+    margin-bottom: 0.25rem;
+    padding: 0 0.15rem;
+  }
+
+  .heading-lead::after {
+    margin-top: 0.35rem;
+    height: 2px;
+    width: 2rem;
+  }
+
+  .heading-title {
+    font-size: 1.1rem;
+    letter-spacing: -0.03em;
+  }
+
+  .heading-sub {
+    margin-top: 0.12rem;
+    font-size: 0.68rem;
+  }
+
+  .reset_lease_btn {
+    flex-shrink: 0;
+    align-self: flex-end;
+    min-width: 0;
+    padding: 0.28rem 0.62rem;
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    border-radius: 6px;
+  }
+
+  .row-section {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 0.45rem;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  .row-section br {
+    display: none;
+  }
+
+  .row-section form {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .row-section form fieldset {
+    flex: 0 0 auto;
+    padding: 0.4rem 0.45rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .row-section form fieldset.payment_label {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.45rem 0.4rem 0.45rem;
+  }
+
+  legend {
+    margin-bottom: 0.35rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.07em;
+  }
+
+  legend.legend-pillar {
+    font-size: 0.62rem;
+    padding: 0.3rem 0.55rem;
+    margin-bottom: 0.4rem;
+    border-radius: 6px;
+  }
+
+  .control {
+    margin-bottom: 0.18rem;
+  }
+
+  .control label {
+    width: 8.25rem;
+    font-size: 0.72rem;
+  }
+
+  .variable,
+  .dropdown {
+    width: 7.35rem;
+    height: 1.62rem;
+    font-size: 0.72rem;
+    padding-left: 6px;
+    border-radius: 6px;
+  }
+
+  .variable {
+    padding-right: 6px;
+  }
+
+  .tax {
+    width: 3.55rem;
+    height: 1.62rem;
+    font-size: 0.72rem;
+    padding-right: 6px;
+    border-radius: 6px;
+  }
+
+  input[readonly] {
+    font-size: 0.72rem;
+    padding-left: 6px;
+  }
+
+  .payment {
+    font-size: clamp(1.35rem, 2.6vh, 1.85rem);
+    margin-top: 0.1rem;
+    min-height: 1.85rem;
+  }
+
+  .payment_hint {
+    font-size: 0.58rem;
+    padding: 0.28rem 0.4rem;
+    margin-top: 0.1rem;
+  }
+
+  fieldset.payment_label > legend.payment_label {
+    margin-bottom: 0.2rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 760px) {
+  .heading-title {
+    font-size: 1.05rem;
+  }
+
+  .control {
+    margin-bottom: 0.12rem;
+  }
+
+  .variable,
+  .dropdown,
+  .tax {
+    height: 1.48rem;
+  }
+
+  legend {
+    margin-bottom: 0.25rem;
+  }
+
+  .payment {
+    font-size: clamp(1.15rem, 2.5vh, 1.55rem);
+    min-height: 1.65rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 640px) {
+  main.lease-calculator {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
+  .row-section {
+    gap: 0.35rem;
+  }
+
+  .border {
+    transform: scale(0.97);
+    transform-origin: top center;
+  }
+}
+
   opacity: 1;
   animation-name: slideUpOpacity;
   animation-iteration-count: 1;
-  animation-timing-function: ease-in;
-  animation-duration: 0.75s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 0.55s;
 }
 
 @keyframes slideUpOpacity {
   0% {
-    transform: translateY(1rem);
+    transform: translateY(10px);
     opacity: 0;
   }
   100% {
-    transform: translateY(0rem);
+    transform: translateY(0);
     opacity: 1;
-    /* transition: transform 1.5s, opacity 1s; */
   }
 }
 
@@ -81,43 +386,78 @@ body {
   }
 }
 
-@media (min-height: 850px) {
-  .first-row {
-    margin-top: 3%;
-  }
-  .calc-content {
-    margin: 5%;
-  }
-  body {
-    overflow-y: visible;
-  }
-}
-
-@media (min-width: 1600px) {
+@media (min-height: 850px) and (max-width: 1023px) {
   main.lease-calculator {
-    padding: 0 16%;
+    padding-top: 2.5rem;
   }
 }
 
+/* ——— Fieldsets ——— */
 fieldset {
-  padding: 0 0.5rem 0.5rem;
-  border: 1px solid #d1d1d1;
-  border-radius: 5px;
+  margin: 0;
+  padding: 1.125rem 1.25rem;
+  border: none;
+  border-radius: 0;
   height: fit-content;
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+}
+
+.row-section form fieldset:last-of-type {
+  border-bottom: none;
 }
 
 legend {
-  width: unset;
-  margin: 0;
-  padding: 0 0.2rem;
-  font-size: 1.1rem;
-  font-weight: 500;
+  display: block;
+  width: 100%;
+  margin: 0 0 0.875rem;
+  padding: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+/* Column headers: Options, Cap Reduction, Payment inputs */
+legend.legend-pillar {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 0.75rem;
+  padding: 0.42rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-hover);
+  border: 1px solid rgba(5, 150, 105, 0.28);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(5, 150, 105, 0.11) 0%, rgba(5, 150, 105, 0.04) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.control {
+  margin-bottom: 0.5rem;
+}
+
+.control:last-child {
+  margin-bottom: 0;
 }
 
 .control label {
   width: 10rem;
   display: inline-block;
-  font-size: 0.9rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  vertical-align: middle;
+  letter-spacing: -0.01em;
+}
+
+label.label_total,
+.control label.label_total {
+  color: var(--text);
+  font-weight: 600;
 }
 
 label {
@@ -126,64 +466,90 @@ label {
 
 .variable,
 .dropdown {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   width: 8.5rem;
-  height: 1.75rem;
-  margin: 1px;
-  border: 1px solid #9c9c9c;
-  border-radius: 2px;
-  font-size: 0.9rem;
-  padding-left: 5px;
-  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  height: 2.25rem;
+  margin: 0 0 0 2px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding-left: 10px;
+  background: var(--field-fill);
+  color: var(--text);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
 }
+
 .dropdown {
   text-align: center;
   text-indent: 5px;
+  cursor: pointer;
+  font-weight: 500;
 }
 
 .variable {
   text-align: right;
-  padding-right: 12px;
-  /* direction: rtl; */
+  padding-right: 10px;
+}
+
+input:not([readonly]):hover,
+.dropdown:hover {
+  border-color: #a1a1aa;
 }
 
 input:not([readonly]):focus,
 .dropdown:focus {
-  color: #495057;
-  background-color: #fff;
-  border-color: #0fd8d9;
+  border-color: var(--accent);
   outline: 0;
-  box-shadow: 0px 0px 4px 2px rgb(83 236 172 / 80%);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+  background-color: #fff;
 }
 
 .tax {
   position: relative;
   left: 1px;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   width: 4.1rem;
-  height: 1.7rem;
+  height: 2.25rem;
   margin: 1px 0;
-  border: 1px solid #9c9c9c;
-  border-radius: 2px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
   text-align: right;
-  padding-right: 12px;
-  font-size: 0.9rem;
-  font-weight: normal !important;
-  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  padding-right: 10px;
+  font-size: 0.8125rem;
+  font-weight: 500 !important;
+  background: var(--field-fill);
+  color: var(--text);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.tax:hover {
+  border-color: #a1a1aa;
+}
+
+.tax:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+  outline: 0;
+  background: #fff;
 }
 
 input[readonly] {
-  background-color: #d9d9d9;
-  border: unset;
-  font-size: 0.9rem;
+  background-color: var(--readonly-fill);
+  border: 1px solid var(--readonly-border);
+  font-size: 0.8125rem;
   font-weight: 500;
-  padding-left: 5px;
-}
-
-.heading-bar {
-  background-color: #13a5a5;
-  margin: 8px;
-  color: #ffffff;
-  font-size: 1.2rem;
-  font-weight: 500;
+  padding-left: 10px;
+  color: var(--text-secondary);
+  cursor: default;
+  box-shadow: inset 0 1px 2px rgba(24, 24, 27, 0.05);
 }
 
 .payment_label {
@@ -191,99 +557,188 @@ input[readonly] {
 }
 
 fieldset.payment_label {
-  height: 8.3rem;
   position: relative;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 1.7rem;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  min-height: auto;
+  padding: 1.35rem 1.25rem 1.15rem;
+  margin: 0;
+  background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 55%, #ffffff 100%);
+  border-bottom: none;
+  border-top: 1px solid var(--accent-muted);
 }
 
-.payment_label {
+fieldset.payment_label > legend.payment_label {
+  order: 1;
+  flex: 0 0 auto;
+  color: var(--accent-hover);
+  margin-bottom: 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
   text-align: center;
-  color: #13a5a5;
+  width: 100%;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--accent-muted);
+  background: none;
+  border-left: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* DOM order is legend → hint → amount; show as legend → amount → hint */
+fieldset.payment_label .payment {
+  order: 2;
+}
+
+fieldset.payment_label .payment_hint {
+  order: 3;
 }
 
 .payment {
   transform: none;
-  font-size: 2rem;
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 2.375rem;
+  font-weight: 600;
   line-height: 1;
+  letter-spacing: -0.03em;
+  color: #047857;
+  margin-top: 0.15rem;
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 0 0 auto;
 }
 
 .payment_hint {
-  position: absolute;
-  left: 50%;
-  bottom: -0.1rem;
-  transform: translateX(-50%);
-  max-width: calc(100% - 1rem);
-  padding: 0.2rem 0.45rem;
-  border-radius: 3px;
-  font-size: 0.67rem;
+  display: none;
+  position: static;
+  width: 100%;
+  max-width: 100%;
+  margin: 0.15rem 0 0;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.6875rem;
   font-weight: 500;
   text-align: center;
-  color: #6f2d10;
-  background-color: rgba(231, 187, 161, 0.45);
-  visibility: hidden;
-  line-height: 1.1;
+  color: var(--warn-text);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  line-height: 1.35;
   pointer-events: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  flex: 0 0 auto;
+  align-self: stretch;
 }
 
 .payment_hint.visible {
-  visibility: visible;
+  display: block;
 }
 
 .reset_lease_btn {
-  width: 10rem;
+  width: auto;
+  min-width: 7.25rem;
+  font-family: var(--font);
   font-weight: 600;
-  border-radius: 3px;
-  margin: 1rem 0.5rem;
-  padding: 2px;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  border-radius: 6px;
+  margin: 0;
+  padding: 0.42rem 0.95rem;
+  color: #fff;
+  background: linear-gradient(180deg, #10b981 0%, var(--accent) 100%);
+  border: 1px solid #059669;
+  box-shadow:
+    0 1px 2px rgba(5, 150, 105, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.reset_lease_btn:hover,
+.reset_lease_btn:focus {
+  color: #fff;
+  background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+  border-color: #047857;
+  box-shadow:
+    0 4px 14px rgba(5, 150, 105, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.reset_lease_btn:focus {
+  outline: 0;
+  box-shadow:
+    0 0 0 3px var(--accent-ring),
+    0 4px 14px rgba(5, 150, 105, 0.25);
+}
+
+.reset_lease_btn:active {
+  transform: translateY(1px);
+}
+
+/* Bootstrap `.btn` defaults would flatten the primary styling */
+.btn.reset_lease_btn,
+.btn.reset_lease_btn:focus {
+  color: #fff;
+  background: linear-gradient(180deg, #10b981 0%, var(--accent) 100%);
+  border-color: #059669;
+}
+
+.btn.reset_lease_btn:hover {
+  color: #fff;
+  background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+  border-color: #047857;
 }
 
 button.load-points {
   position: absolute;
   padding: 4px 7px;
-  border: 1px solid #9c9c9c;
-  border-radius: 2px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
   margin-top: 1.5px;
 }
+
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
   margin: 0;
 }
 
-/* Placeholder */
 ::-webkit-input-placeholder {
-  /* font-style: italic; */
-  color: #bbb;
+  color: #a1a1aa;
 }
+
 :-ms-input-placeholder {
-  /* font-style: italic; */
-  color: #bbb;
+  color: #a1a1aa;
 }
 
 ::placeholder {
-  /* font-style: italic; */
-  color: #bbb;
+  color: #a1a1aa;
 }
 
-/* Returns inputs to neutral styling after invalid markers are cleared. */
 .reset-not-a-number {
-  border: 1px solid #9c9c9c;
-  color: #495057;
+  border: 1px solid var(--line-strong);
+  color: var(--text);
 }
 
-/* Visual indicator for invalid numeric/tax entries. */
 .not-a-number {
-  border: 2.5px solid #e74c3c;
-  color: #e74c3c;
+  border: 2px solid var(--danger);
+  color: var(--danger);
 }
 
 .fa-exclamation-circle:hover {
@@ -295,55 +750,134 @@ input[type='number']::-webkit-outer-spin-button {
   outline: none;
 }
 
-/* remove arrows */
-/* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-/* Firefox */
+
 input[type='number'] {
   appearance: textfield;
   -moz-appearance: textfield;
 }
 
-/* width */
 ::-webkit-scrollbar {
-  width: 1rem;
+  width: 8px;
 }
-/* Track */
+
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--bg);
 }
-/* Scrollbars */
-/* Handle */
+
 ::-webkit-scrollbar-thumb {
-  background: #bfbfbf;
+  background: #d4d4d8;
+  border-radius: 99px;
 }
-/* Handle on hover */
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #949494;
+  background: #a1a1aa;
 }
 
 .tooltip-inner {
-  background-color: #0b6f6f !important;
-  color: #fff;
-  font-size: 0.85rem;
+  background-color: var(--text) !important;
+  color: #fafafa !important;
+  font-size: 0.8125rem;
+  font-family: var(--font);
   text-align: left;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.65rem;
+  box-shadow: var(--shadow-card);
 }
 
 .tooltip .arrow:before {
-  border-bottom-color: #0b6f6f;
-  border-top-color: #0b6f6f;
+  border-bottom-color: var(--text);
+  border-top-color: var(--text);
 }
 
 .fa {
   position: absolute;
   margin-left: 3px;
-  color: #118a8a;
+  color: var(--accent);
   cursor: pointer;
 }
+
 .fa-asterisk {
   font-size: 0.5rem !important;
+}
+
+@media (max-width: 600px) {
+  main.lease-calculator {
+    padding: 0.75rem 0 1.25rem;
+  }
+
+  .calc-content {
+    padding: 0 0.75rem;
+  }
+
+  .heading-bar {
+    margin-bottom: 1.25rem;
+  }
+
+  .heading-lead::after {
+    margin-top: 0.75rem;
+  }
+
+  legend.legend-pillar {
+    font-size: 0.72rem;
+    padding: 0.35rem 0.55rem 0.35rem 0.6rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .reset_lease_btn {
+    width: 100%;
+    max-width: 16rem;
+    min-height: 2.35rem;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.75rem;
+    align-self: center;
+  }
+
+  fieldset {
+    padding: 1rem 1rem;
+  }
+
+  .control label {
+    width: 100%;
+    display: block;
+    margin-bottom: 0.35rem;
+    position: relative;
+    padding-right: 1.25rem;
+  }
+
+  .variable,
+  .dropdown {
+    width: 100%;
+    max-width: 100%;
+    min-height: 2.5rem;
+    height: auto;
+    box-sizing: border-box;
+  }
+
+  .tax {
+    width: calc(50% - 2px);
+    max-width: none;
+    min-height: 2.5rem;
+    height: auto;
+    box-sizing: border-box;
+  }
+
+  fieldset.payment_label {
+    min-height: 0;
+    padding: 1rem 0.85rem 1rem;
+  }
+
+  .payment {
+    font-size: 1.875rem;
+  }
+
+  .payment_hint {
+    font-size: 0.625rem;
+    max-width: calc(100% - 1rem);
+    padding: 0.35rem 0.5rem;
+  }
 }
